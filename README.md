@@ -10,8 +10,8 @@
 
 ## Ссылки на проект
 
-IP-адрес x.x.x.x
+IP-адрес 158.160.42.14
 
-Frontend https://...
+Frontend https://mesto.veitko-se.students.nomoredomains.work
 
 Backend https://...
