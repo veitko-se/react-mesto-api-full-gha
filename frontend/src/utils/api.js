@@ -1,9 +1,12 @@
 /** Класс для работы с API сервера */
 class Api {
-  constructor({ baseUrl, headers }) {
+  constructor(baseUrl) {
     this._baseUrl = baseUrl;
-    this._authorization = headers.authorization;
-    this._headers = headers;
+  }
+
+  /** приватный метод - получение токена */
+  _getToken() {
+    return localStorage.getItem('token');
   }
 
   /** приватный метод - проверка ответа сервера */
@@ -22,18 +25,23 @@ class Api {
 
   /** загрузить данные о пользователе с сервера */
   loadUserInfo() {
+    const token = this._getToken();
     return this._request(`/users/me`, {
       headers: {
-        authorization: this._authorization
+        'Authorization': `Bearer ${token}`
       }
     })
   }
 
   /** обновить информацию о пользователе */
   updateUserInfo({name, about}) {
+    const token = this._getToken();
     return this._request(`/users/me`, {
       method: 'PATCH',
-      headers: this._headers,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
       body: JSON.stringify({
         name, about
       })
@@ -42,9 +50,13 @@ class Api {
 
   /** обновить аватар */
   updateUserAvatar({avatar}) {
+    const token = this._getToken();
     return this._request(`/users/me/avatar`, {
       method: 'PATCH',
-      headers: this._headers,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
       body: JSON.stringify({
         avatar
       })
@@ -53,18 +65,23 @@ class Api {
 
   /** загрузить карточки с сервера */
   loadInitialCards() {
+    const token = this._getToken();
     return this._request(`/cards`, {
       headers: {
-        authorization: this._authorization
+        'Authorization': `Bearer ${token}`
       }
     })
   }
 
   /** отправить карточку на сервер */
   pushCard({ name, link }) {
+    const token = this._getToken();
     return this._request(`/cards`, {
       method: 'POST',
-      headers: this._headers,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
       body: JSON.stringify({
         name, link
       })
@@ -73,29 +90,31 @@ class Api {
 
   /** удалить карточку на сервере */
   deleteCard(cardId) {
+    const token = this._getToken();
     return this._request(`/cards/${cardId}`, {
       method: 'DELETE',
-      headers: this._headers
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
     })
   }
 
   /** поставить/удалить лайк на сервере */
   changeLikeCardStatus(cardId, isLike) {
+    const token = this._getToken();
     const currMethod = (isLike ? 'PUT' : 'DELETE');
     return this._request(`/cards/${cardId}/likes`, {
       method: currMethod,
-      headers: this._headers
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
     })
   }
 }
 
 /** экземляр класса Api*/
-const api = new Api({
-  baseUrl: 'https://mesto.nomoreparties.co/v1/cohort-62',
-  headers: {
-    authorization: 'c024f246-bb18-41cb-8ec3-55e361b94019',
-    'Content-Type': 'application/json'
-  }
-});
+const api = new Api('https://api.veitko-se.students.nomoredomains.xyz');
 
 export default api;

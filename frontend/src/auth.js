@@ -53,6 +53,6 @@ class Auth {
 }
 
 /** экземляр класса*/
-const auth = new Auth('https://auth.nomoreparties.co');
+const auth = new Auth('https://api.veitko-se.students.nomoredomains.xyz');
 
 export default auth;

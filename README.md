@@ -8,7 +8,7 @@
 
 ## Ссылки на проект
 
-IP-адрес 158.160.42.14
+IP 158.160.42.14
 
 Frontend https://mesto.veitko-se.students.nomoredomains.work
 
