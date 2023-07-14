@@ -9,6 +9,7 @@ const router = require('./routes');
 const { badRequestErrorHandler, unexpectedErrorHandler } = require('./middlewares/error-handler');
 const { HTTP_PORT, DB_URL } = require('./utils/settings');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const { simpleCors, complexCors } = require('./middlewares/cors');
 
 const app = express();
 const limiter = rateLimit({
@@ -27,6 +28,8 @@ app.use(helmet());
 app.disable('x-powered-by');
 
 app.use(requestLogger);
+app.use(complexCors);
+app.use(simpleCors);
 app.use(router);
 app.use(errorLogger);
 app.use(errors()); // ошибки от Celebrate
