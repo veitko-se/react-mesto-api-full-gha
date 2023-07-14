@@ -16,7 +16,7 @@ const deleteCard = (cardId) => Card.findByIdAndRemove(cardId)
   .orFail(() => new NotFoundError(`Карточка с _id='${cardId}' не найдена`));
 
 module.exports.getCards = (req, res, next) => {
-  Card.find({})
+  Card.find({}).sort([['createdAt', -1]])
     .then((cards) => res.send(cards))
     .catch(next);
 };

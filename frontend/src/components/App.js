@@ -24,7 +24,7 @@ function App() {
   const [selectedCard, setSelectedCard] = useState({});
   const [currentUser, setCurrentUser] = useState(user.loadUser);
   const [cards, setCards] = useState([]);
-  const [stateLoading, setState] = useState(true);
+  const [stateLoading, setStateLoading] = useState(true);
   const navigate = useNavigate();
   const [loggedIn, setLoggedIn] = useState(false);
   const [email, setEmail] = useState('');
@@ -36,14 +36,16 @@ function App() {
   }, []);
 
  useEffect(() => {
-    Promise.all([api.loadUserInfo(), api.loadInitialCards()])
-    .then(([newUserInfo, initialCards]) => {
-      setCurrentUser(newUserInfo)
-      setCards(initialCards);
-    })
-    .catch(err => console.log(`Ошибка: ${err}`))
-    .finally(()=>setState(false));
-  }, []);
+    if (loggedIn) {
+      Promise.all([api.loadUserInfo(), api.loadInitialCards()])
+      .then(([newUserInfo, initialCards]) => {
+        setCurrentUser(newUserInfo)
+        setCards(initialCards);
+      })
+      .catch(err => console.log(`Ошибка: ${err}`))
+      .finally(()=>setStateLoading(false));
+    }
+  }, [loggedIn]);
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
@@ -72,7 +74,7 @@ function App() {
   };
 
   function handleCardLike(card) {
-    const isLiked = card.likes.some(i => i._id === currentUser._id);
+    const isLiked = card.likes.some(i => i === currentUser._id);
     api.changeLikeCardStatus(card._id, !isLiked)
     .then((newCard) => {
       setCards(cardsCopy => cardsCopy.map(
@@ -125,18 +127,16 @@ function App() {
   };
 
   function handleTokenCheck() {
-    if (localStorage.getItem('token')){
-      const token = localStorage.getItem('token');
-      if (token&&(token!=='undefined')) {
-        auth.checkToken(token)
-        .then((data) => {
-          if (data) {
-            handleLogin(data.email);
-            navigate('/', {replace: true})
-          }
-        })
-        .catch(err => console.log(`Ошибка: ${err}`));
-      };
+    const token = localStorage.getItem('token');
+    if (token&&(token!=='undefined')) {
+      auth.checkToken(token)
+      .then((data) => {
+        if (data) {
+          handleLogin(data.email);
+          navigate('/', {replace: true})
+        }
+      })
+      .catch(err => console.log(`Ошибка: ${err}`));
     };
   };
 
@@ -169,10 +169,19 @@ function App() {
     });
   };
 
+  function onSignOut(){
+    localStorage.removeItem('token');
+    setLoggedIn(false);
+    setCurrentUser(user.loadUser);
+    setEmail('');
+    setStateLoading(true);
+    navigate('/sign-in');
+  }
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
-        <Header login={email} />
+        <Header login={email} onSignOut={onSignOut}/>
         <Routes>
           <Route path="*" element={<Navigate to="/sign-in"/>}/>
           <Route path="/" element={

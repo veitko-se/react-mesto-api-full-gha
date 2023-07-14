@@ -47,8 +47,7 @@ class Auth {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       }
-    })
-    .then(res => res.data);
+    });
   }
 }
 

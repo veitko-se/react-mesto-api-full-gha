@@ -1,13 +1,7 @@
 import headerLogo from '../images/header-logo.svg';
-import {Link, useNavigate, Route, Routes} from 'react-router-dom';
+import {Link, Route, Routes} from 'react-router-dom';
 
-function Header({login}) {
-  const navigate = useNavigate();
-
-  function onSignOut(){
-    localStorage.removeItem('token');
-    navigate('/sign-in');
-  }
+function Header({login, onSignOut}) {
 
   return (
     <header className="header">
