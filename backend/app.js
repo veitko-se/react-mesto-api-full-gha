@@ -28,8 +28,8 @@ app.use(helmet());
 app.disable('x-powered-by');
 
 app.use(requestLogger);
-app.use(complexCors);
 app.use(simpleCors);
+app.use(complexCors);
 app.use(router);
 app.use(errorLogger);
 app.use(errors()); // ошибки от Celebrate
